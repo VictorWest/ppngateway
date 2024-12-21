@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
+/* body{
     background-color: #2A2B3A;
-}
+} */
 
 /* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {

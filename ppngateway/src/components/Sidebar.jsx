@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import { useState, useContext } from 'react'
 import ppnImg from "../assets/ppnImg.png"
+import ppnImgSmall from "../assets/ppnImgSmall.png"
 import SidebarItem from './SidebarItem'
 import { Link } from 'react-router-dom'
+import { StateContext } from '../store/ContextStore'
 export default function Sidebar() {
   const [helpIsClicked, setHelpIsClicked] = useState(false)
+  const {sidebarOpen} = useContext(StateContext)
   return (
-    <div className='flex flex-col h-screen'>
-      <img src={ppnImg} alt="" className='p-3 bg-white'/>
+    <div className='flex flex-col h-screen transition-transform duration-1000'>
+      {sidebarOpen ? <img src={ppnImg} alt="" className='p-3 bg-white transition-transform duration-500'/> : <img src={ppnImgSmall} />}
       <div className='flex-1 overflow-y-auto custom-scrollbar'>
         <SidebarItem title="Dashboard" link={"/dashboard"} icon="fa-solid fa-chart-column"/>
         <SidebarItem title="Process Transaction" link={"/transaction"} icon="fa-solid fa-dollar-sign"/>

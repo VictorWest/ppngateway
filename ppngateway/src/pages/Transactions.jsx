@@ -7,6 +7,8 @@ import Input from '../components/Input';
 import { IoIosInformationCircle } from "react-icons/io";
 import { IoMdCheckmark } from "react-icons/io";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
+import { FaMoneyBills } from "react-icons/fa6";
+import { BsBoxSeamFill } from "react-icons/bs";
 
 export default function Transactions() {
   const {darkMode} = useContext(StateContext)
@@ -28,10 +30,20 @@ export default function Transactions() {
     po: false,
     description: false
   })
+  const [transValueShow, setTransValueShow] = useState({
+    invoice: '',
+    po: '',
+    description: ''
+  })
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
-  };
+  }
+  const [billingInfoShow, setBillingInfoShow] = useState({
+    first: '',
+    last: '',
+    street: ''
+  })
 
   useEffect(() => {
     const total = parseFloat(totalAmount.amount) + ((parseFloat(totalAmount.surchage) / 100) * parseFloat(totalAmount.amount)) 
@@ -40,7 +52,7 @@ export default function Transactions() {
   
   return (
     <div className='relative'>
-        <div className={`flex items-center text-2xl font-bold ${darkMode ? 'text-[#B8BBC7]' : 'text-[#22222B]'}  gap-5 mb-4 px-5 py-4`}>
+        <div className={`flex items-center text-2xl font-bold ${darkMode ? 'text-[#B8BBC7]' : 'text-[#22222B]'}  gap-5 mb-4 px-5 py-4 `}>
           <i className="fa-solid fa-dollar-sign text-[#BA77FF]"></i>
           <p>Process Transactions</p>
         </div>
@@ -209,26 +221,131 @@ export default function Transactions() {
             </div>
           </div>
         </div>
-        <div className='bg-[#404153] mx-8 mt-8 h-10 text-white flex items-center p-5 cursor-pointer hover:bg-[#494b63]' onClick={() => setDetailsAreOpen(prev => ({...prev, transaction: !prev.transaction}))}>
+
+        {/* Transaction Details */}
+        <div className='bg-[#404153] mx-8 mt-10 h-10 text-white flex items-center p-5 cursor-pointer hover:bg-[#494b63]' onClick={() => setDetailsAreOpen(prev => ({...prev, transaction: !prev.transaction}))}>
           Transaction Details
           <div className={`ml-auto ${detailsAreOpen.transaction && 'rotate-180'}`}><GoTriangleDown/></div>
         </div>
 
-        {/* Transaction Details */}
-        <div className='mx-8 py-8 h-48 border-2 border-t-0 border-gray-500 px-5 flex items-center justify-center text-[#5F93FE] gap-5'>
-            <div className='relative'>
-              <label htmlFor="" className='absolute -top-7 left-0'>Invoice Number</label>
-              <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder='Invoice Number'/>
+        {detailsAreOpen.transaction && <div className='mx-8 py-8 h-48 border-2 border-t-0 border-gray-500 px-5 flex items-center justify-center text-[#5F93FE] gap-5' >
+            <div className='relative' onFocus={() => setTransDetailsShow({
+                invoice: true,
+                po: false,
+                description: false
+              })} onBlur={() =>  setTransDetailsShow(prev => ({
+                ...prev,
+                invoice: false
+              }))}>
+              {(transDetailsShow.invoice || transValueShow.invoice !== '') && <label htmlFor="" className='absolute -top-7 left-0'>Invoice Number</label>}
+              <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder={!transDetailsShow.invoice && `Invoice Number`} onChange={(e) => setTransValueShow(prev => ({...prev, invoice: e.target.value}))}/>
             </div>
-            <div className='relative'>
-              <label htmlFor="" className='absolute -top-7 left-0'>PO Number</label>
-              <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder='PO Number'/>
+            <div className='relative' onFocus={() => setTransDetailsShow({
+                invoice: false,
+                po: true,
+                description: false
+              })} onBlur={() =>  setTransDetailsShow(prev => ({
+                ...prev,
+                po: false
+              }))}>
+              {(transDetailsShow.po || transValueShow.po !== '') && <label htmlFor="" className='absolute -top-7 left-0'>PO Number</label>}
+              <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder={!transDetailsShow.po && `PO Number`} onChange={(e) => setTransValueShow(prev => ({...prev, po: e.target.value}))}/>
             </div>
-            <div className='relative'>
-              <label htmlFor="" className='absolute -top-7 left-0'>Description</label>
-              <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder='Description'/>
+            <div className='relative' onFocus={() => setTransDetailsShow({
+                invoice: false,
+                po: false,
+                description: true
+              })} onBlur={() =>  setTransDetailsShow(prev => ({
+                ...prev,
+                description: false
+              }))}>
+              {(transDetailsShow.description || transValueShow.description !== '') && <label htmlFor="" className='absolute -top-7 left-0'>Description</label>}
+              <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder={!transDetailsShow.description && `Description`} onChange={(e) => setTransValueShow(prev => ({...prev, description: e.target.value}))}/>
             </div>
+        </div>}
+
+        {/* Billing & Shipping Info */}
+        <div className='bg-[#404153] mx-8 mt-5 h-10 text-white flex items-center p-5 cursor-pointer hover:bg-[#494b63]' onClick={() => setDetailsAreOpen(prev => ({...prev, billing: !prev.billing}))}>
+          Billing and Shopping Info
+          <div className={`ml-auto ${detailsAreOpen.transaction && 'rotate-180'}`}><GoTriangleDown/></div>
         </div>
+        <div className='mx-8 py-8 h-[96rem] border-2 border-t-0 border-gray-500 px-5 relative'>
+          <div className='flex items-center justify-center gap-5 text-gray-500  text-2xl'>
+            {/* Billing-Shipping headers */}
+            <div className='flex items-center justify-between border-2 border-dashed border-gray-400 w-1/2 h-32 p-5'>
+              <div className='text-8xl absolute top-10'><FaMoneyBills/></div>
+              <p className='mx-auto'>Billing</p>
+            </div>
+            <div className='flex items-center justify-between border-2 border-dashed border-gray-400 w-1/2 h-32 p-5'>
+              <div className='text-7xl'><BsBoxSeamFill/></div>
+              <p className='ml-auto mr-auto'>Shipping</p>
+              <div className='flex gap-2 text-lg items-center w-24 text-white'>
+                  <input type="checkbox" className='cursor-pointer'/>
+                  <label htmlFor="">Same as Billing</label>
+              </div>
+            </div>
+          </div>  
+            <div className='flex items-center justify-center gap-5'>
+              <form action="">
+                <div className='relative' onFocus={() => setTransDetailsShow({
+                    invoice: true,
+                    po: false,
+                    description: false
+                  })} onBlur={() =>  setTransDetailsShow(prev => ({
+                    ...prev,
+                    invoice: false
+                  }))}>
+                  {(transDetailsShow.invoice || transValueShow.invoice !== '') && <label htmlFor="" className='absolute -top-7 left-0'>Invoice Number</label>}
+                  <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder={!transDetailsShow.invoice && `Invoice Number`} onChange={(e) => setTransValueShow(prev => ({...prev, invoice: e.target.value}))}/>
+                </div>
+                <div className='relative' onFocus={() => setTransDetailsShow({
+                    invoice: true,
+                    po: false,
+                    description: false
+                  })} onBlur={() =>  setTransDetailsShow(prev => ({
+                    ...prev,
+                    invoice: false
+                  }))}>
+                  {(transDetailsShow.invoice || transValueShow.invoice !== '') && <label htmlFor="" className='absolute -top-7 left-0'>Invoice Number</label>}
+                  <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder={!transDetailsShow.invoice && `Invoice Number`} onChange={(e) => setTransValueShow(prev => ({...prev, invoice: e.target.value}))}/>
+                </div>
+                <div className='relative' onFocus={() => setTransDetailsShow({
+                    invoice: true,
+                    po: false,
+                    description: false
+                  })} onBlur={() =>  setTransDetailsShow(prev => ({
+                    ...prev,
+                    invoice: false
+                  }))}>
+                  {(transDetailsShow.invoice || transValueShow.invoice !== '') && <label htmlFor="" className='absolute -top-7 left-0'>Invoice Number</label>}
+                  <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder={!transDetailsShow.invoice && `Invoice Number`} onChange={(e) => setTransValueShow(prev => ({...prev, invoice: e.target.value}))}/>
+                </div>
+                <div className='relative' onFocus={() => setTransDetailsShow({
+                    invoice: true,
+                    po: false,
+                    description: false
+                  })} onBlur={() =>  setTransDetailsShow(prev => ({
+                    ...prev,
+                    invoice: false
+                  }))}>
+                  {(transDetailsShow.invoice || transValueShow.invoice !== '') && <label htmlFor="" className='absolute -top-7 left-0'>Invoice Number</label>}
+                  <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder={!transDetailsShow.invoice && `Invoice Number`} onChange={(e) => setTransValueShow(prev => ({...prev, invoice: e.target.value}))}/>
+                </div>
+                <div className='relative' onFocus={() => setTransDetailsShow({
+                    invoice: true,
+                    po: false,
+                    description: false
+                  })} onBlur={() =>  setTransDetailsShow(prev => ({
+                    ...prev,
+                    invoice: false
+                  }))}>
+                  {(transDetailsShow.invoice || transValueShow.invoice !== '') && <label htmlFor="" className='absolute -top-7 left-0'>Invoice Number</label>}
+                  <input type="text" className='bg-[#313242] p-2 outline-none text-white' placeholder={!transDetailsShow.invoice && `Invoice Number`} onChange={(e) => setTransValueShow(prev => ({...prev, invoice: e.target.value}))}/>
+                </div>
+              </form>
+          </div>        
+        </div>
+
 
         {/* Footer */}
         <div className='sticky bottom-0 bg-[#404153] text-[#B7BBC2] h-14 flex items-center justify-center'>
